@@ -12,7 +12,7 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { IUser } from 'src/users/user.interface';
-import { User } from 'src/decorator/customize';
+import { ResponseMessage, User } from 'src/decorator/customize';
 
 @Controller('companies')
 export class CompaniesController {
@@ -24,6 +24,7 @@ export class CompaniesController {
   }
 
   @Get()
+  @ResponseMessage('Get all companies successfully with pagination')
   findAll(
     @Query('page') currentPage: string,
     @Query('limit') limit: string,
