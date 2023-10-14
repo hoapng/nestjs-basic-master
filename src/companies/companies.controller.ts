@@ -12,14 +12,14 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { IUser } from 'src/users/user.interface';
-import { ResponseMessage, User } from 'src/decorator/customize';
+import { ResponseMessage, UserDecor } from 'src/decorator/customize';
 
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
+  create(@Body() createCompanyDto: CreateCompanyDto, @UserDecor() user: IUser) {
     return this.companiesService.create(createCompanyDto, user);
   }
 
@@ -42,13 +42,13 @@ export class CompaniesController {
   update(
     @Param('id') id: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
-    @User() user: IUser,
+    @UserDecor() user: IUser,
   ) {
     return this.companiesService.update(id, updateCompanyDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @User() user: IUser) {
+  remove(@Param('id') id: string, @UserDecor() user: IUser) {
     return this.companiesService.remove(id, user);
   }
 }
