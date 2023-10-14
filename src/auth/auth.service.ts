@@ -6,6 +6,8 @@ import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { User, UserDocument } from 'src/users/schemas/user.schema';
+import ms from 'ms';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
   constructor(
@@ -13,6 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectModel(User.name)
     private userModel: SoftDeleteModel<UserDocument>,
+    private configService: ConfigService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -36,8 +39,12 @@ export class AuthService {
       email,
       role,
     };
+
+    const refresh_token = this.createRefreshToken(payload);
+
     return {
       access_token: this.jwtService.sign(payload),
+      refresh_token,
       _id,
       name,
       email,
@@ -66,4 +73,13 @@ export class AuthService {
       createdAt: user?.createdAt,
     };
   }
+
+  createRefreshToken = (payload: any) => {
+    const refresh_token = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn:
+        ms(this.configService.get<string>('JWT_REFRESH_EXPIRE')) / 1000,
+    });
+    return refresh_token;
+  };
 }
