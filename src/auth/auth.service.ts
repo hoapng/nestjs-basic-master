@@ -135,4 +135,10 @@ export class AuthService {
       throw new BadRequestException('Invalid refresh token');
     }
   };
+
+  logout = async (user: IUser, response: Response) => {
+    response.clearCookie('refresh_token');
+    await this.usersService.updateUserToken(user._id, '');
+    return 'ok';
+  };
 }
