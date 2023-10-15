@@ -33,6 +33,7 @@ export class UsersController {
   ) {
     return this.usersService.findAll(+currentPage, +limit, qs);
   }
+
   @Public()
   @Get(':id')
   @ResponseMessage('Get user successfully')
