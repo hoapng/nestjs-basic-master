@@ -11,7 +11,7 @@ import { Public, ResponseMessage, UserDecor } from 'src/decorator/customize';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from 'src/users/dto/create-user.dto';
-import { Response, Request } from 'express';
+import { Response, Request, response } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { IUser } from 'src/users/user.interface';
 
@@ -38,5 +38,16 @@ export class AuthController {
   @ResponseMessage('Get account successfully')
   getProfile(@UserDecor() user: IUser) {
     return user;
+  }
+
+  @Public()
+  @Get('/refresh')
+  @ResponseMessage('Get new token successfully')
+  handleRefreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = req.cookies['refresh_token'];
+    return this.authService.processNewToken(refreshToken, response);
   }
 }
