@@ -15,14 +15,19 @@ export class CompaniesService {
     @InjectModel(Company.name)
     private companyModel: SoftDeleteModel<CompanyDocument>,
   ) {}
+
   async create(createCompanyDto: CreateCompanyDto, user: IUser) {
-    return await this.companyModel.create({
+    let company = await this.companyModel.create({
       ...createCompanyDto,
       createdBy: {
         _id: user._id,
         email: user.email,
       },
     });
+    return {
+      _id: company._id,
+      createdAt: company?.createdAt,
+    };
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
