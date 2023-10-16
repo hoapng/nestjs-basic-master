@@ -13,9 +13,12 @@ import { Response } from 'express';
 export class AuthService {
   constructor(
     private usersService: UsersService,
+
     private jwtService: JwtService,
+
     @InjectModel(User.name)
     private userModel: SoftDeleteModel<UserDocument>,
+
     private configService: ConfigService,
   ) {}
 
