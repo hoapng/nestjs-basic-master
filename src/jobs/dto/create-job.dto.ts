@@ -18,6 +18,9 @@ class Company {
 
   @IsNotEmpty()
   name: string;
+
+  @IsNotEmpty()
+  logo: string;
 }
 export class CreateJobDto {
   @IsNotEmpty({ message: 'Name is required' })
@@ -45,6 +48,9 @@ export class CreateJobDto {
 
   @IsNotEmpty({ message: 'Description is required' })
   description: string;
+
+  @IsNotEmpty({ message: 'Location is required' })
+  location: string;
 
   @IsNotEmpty({ message: 'Start date is required' })
   @Transform(({ value }) => new Date(value))

@@ -12,7 +12,7 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { IUser } from 'src/users/user.interface';
-import { ResponseMessage, UserDecor } from 'src/decorator/customize';
+import { Public, ResponseMessage, UserDecor } from 'src/decorator/customize';
 
 @Controller('companies')
 export class CompaniesController {
@@ -23,6 +23,7 @@ export class CompaniesController {
     return this.companiesService.create(createCompanyDto, user);
   }
 
+  @Public()
   @Get()
   @ResponseMessage('Get all companies successfully with pagination')
   findAll(
@@ -33,6 +34,7 @@ export class CompaniesController {
     return this.companiesService.findAll(+currentPage, +limit, qs);
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companiesService.findOne(+id);
