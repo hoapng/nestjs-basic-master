@@ -59,12 +59,12 @@ export class JobsService {
     };
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('not found job');
     }
 
-    return this.jobModel.findOne({ _id: id });
+    return await this.jobModel.findOne({ _id: id });
   }
 
   async update(id: string, updateJobDto: UpdateJobDto, user: IUser) {

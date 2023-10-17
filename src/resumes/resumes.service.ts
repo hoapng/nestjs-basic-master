@@ -73,12 +73,12 @@ export class ResumesService {
     };
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('not found resume');
     }
 
-    return this.resumeModel.findOne({ _id: id });
+    return await this.resumeModel.findOne({ _id: id });
   }
 
   async update(id: string, status: string, user: IUser) {
@@ -126,6 +126,18 @@ export class ResumesService {
   }
 
   async getResumeByUser(user: IUser) {
-    return await this.resumeModel.find({ userId: user._id });
+    return await this.resumeModel
+      .find({ userId: user._id })
+      .sort('createdAt')
+      .populate([
+        {
+          path: 'jobId',
+          select: { name: 1 },
+        },
+        {
+          path: 'companyId',
+          select: { name: 1 },
+        },
+      ]);
   }
 }

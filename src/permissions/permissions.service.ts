@@ -16,6 +16,10 @@ export class PermissionsService {
   ) {}
 
   async create(createPermissionDto: CreatePermissionDto, user: IUser) {
+    const { apiPath, method } = createPermissionDto;
+    const isExist = await this.permissionModel.findOne({ apiPath, method });
+    if (isExist) throw new BadRequestException('permission is exist');
+
     let permission = await this.permissionModel.create({
       ...createPermissionDto,
       createdBy: {
@@ -59,12 +63,12 @@ export class PermissionsService {
     };
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new BadRequestException('not found permission');
     }
 
-    return this.permissionModel.findOne({ _id: id });
+    return await this.permissionModel.findOne({ _id: id });
   }
 
   async update(
