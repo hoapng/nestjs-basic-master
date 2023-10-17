@@ -37,6 +37,7 @@ export class JobsController {
 
   @Get(':id')
   @Public()
+  @ResponseMessage('Get job by id successfully')
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
@@ -52,6 +53,7 @@ export class JobsController {
   }
 
   @Delete(':id')
+  @ResponseMessage('Delete job successfully')
   remove(@Param('id') id: string, @UserDecor() user: IUser) {
     return this.jobsService.remove(id, user);
   }

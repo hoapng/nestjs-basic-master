@@ -16,7 +16,7 @@ export class ResumesService {
   ) {}
 
   async create(createResumeDto: CreateUserCvDto, user: IUser) {
-    let job = await this.resumeModel.create({
+    let resume = await this.resumeModel.create({
       ...createResumeDto,
       email: user.email,
       userId: user._id,
@@ -37,8 +37,8 @@ export class ResumesService {
       },
     });
     return {
-      _id: job._id,
-      createdAt: job?.createdAt,
+      _id: resume._id,
+      createdAt: resume?.createdAt,
     };
   }
 

@@ -36,11 +36,13 @@ export class CompaniesController {
 
   @Public()
   @Get(':id')
+  @ResponseMessage('Get company by id successfully')
   findOne(@Param('id') id: string) {
     return this.companiesService.findOne(id);
   }
 
   @Patch(':id')
+  @ResponseMessage('Update company successfully')
   update(
     @Param('id') id: string,
     @Body() updateCompanyDto: UpdateCompanyDto,
@@ -50,6 +52,7 @@ export class CompaniesController {
   }
 
   @Delete(':id')
+  @ResponseMessage('Delete company successfully')
   remove(@Param('id') id: string, @UserDecor() user: IUser) {
     return this.companiesService.remove(id, user);
   }
