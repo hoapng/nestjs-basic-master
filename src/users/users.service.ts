@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -76,7 +76,9 @@ export class UsersService {
   }
 
   findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found user');
+    }
 
     return this.userModel.findOne({ _id: id }).select('-password');
   }
@@ -90,6 +92,9 @@ export class UsersService {
   }
 
   async update(updateUserDto: UpdateUserDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(updateUserDto._id)) {
+      throw new BadRequestException('not found user');
+    }
     return await this.userModel.updateOne(
       { _id: updateUserDto._id },
       {
@@ -103,7 +108,10 @@ export class UsersService {
   }
 
   async remove(id: string, user: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found user');
+    }
+
     await this.userModel.updateOne(
       { _id: id },
       {

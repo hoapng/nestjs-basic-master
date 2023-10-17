@@ -68,6 +68,10 @@ export class CompaniesService {
   }
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found company');
+    }
+
     return await this.companyModel.updateOne(
       { _id: id },
       {
@@ -81,6 +85,10 @@ export class CompaniesService {
   }
 
   async remove(id: string, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found company');
+    }
+
     await this.companyModel.updateOne(
       { _id: id },
       {

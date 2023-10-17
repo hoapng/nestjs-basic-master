@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateResumeDto, CreateUserCvDto } from './dto/create-resume.dto';
 import { UpdateResumeDto, UpdateUserCvDto } from './dto/update-resume.dto';
@@ -74,13 +74,17 @@ export class ResumesService {
   }
 
   findOne(id: string) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found resume';
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found resume');
+    }
 
     return this.resumeModel.findOne({ _id: id });
   }
 
   async update(id: string, status: string, user: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found resume';
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found resume');
+    }
 
     return await this.resumeModel.updateOne(
       { _id: id },
@@ -105,7 +109,10 @@ export class ResumesService {
   }
 
   async remove(id: string, user: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found resume';
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('not found resume');
+    }
+
     await this.resumeModel.updateOne(
       { _id: id },
       {
