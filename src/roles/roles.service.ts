@@ -17,8 +17,8 @@ export class RolesService {
 
   async create(createRoleDto: CreateRoleDto, user: IUser) {
     const { name } = createRoleDto;
-    const isExist = await this.roleModel.findOne({ name });
-    if (isExist) throw new BadRequestException('role is exist');
+    // const isExist = await this.roleModel.findOne({ name });
+    // if (isExist) throw new BadRequestException('role is exist');
 
     let role = await this.roleModel.create({
       ...createRoleDto,
