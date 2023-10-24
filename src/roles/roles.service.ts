@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { ADMIN_ROLE } from 'src/databases/sample';
 import { IUser } from 'src/users/user.interface';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -17,8 +18,8 @@ export class RolesService {
 
   async create(createRoleDto: CreateRoleDto, user: IUser) {
     const { name } = createRoleDto;
-    // const isExist = await this.roleModel.findOne({ name });
-    // if (isExist) throw new BadRequestException('role is exist');
+    const isExist = await this.roleModel.findOne({ name });
+    if (isExist) throw new BadRequestException('role is exist');
 
     let role = await this.roleModel.create({
       ...createRoleDto,
@@ -101,7 +102,7 @@ export class RolesService {
     }
 
     const foundUser = await this.roleModel.findOne({ _id: id });
-    if (foundUser.name === 'ADMIN')
+    if (foundUser.name === ADMIN_ROLE)
       throw new BadRequestException('can not delete ADMIN role');
     await this.roleModel.updateOne(
       { _id: id },

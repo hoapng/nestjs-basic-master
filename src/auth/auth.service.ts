@@ -9,6 +9,10 @@ import { User, UserDocument } from 'src/users/schemas/user.schema';
 import ms from 'ms';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { USER_ROLE } from 'src/databases/sample';
+import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
+import { RolesService } from 'src/roles/roles.service';
+import { use } from 'passport';
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,6 +24,10 @@ export class AuthService {
     private userModel: SoftDeleteModel<UserDocument>,
 
     private configService: ConfigService,
+
+    @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
+
+    private roleService: RolesService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -27,14 +35,20 @@ export class AuthService {
     if (user) {
       const isValid = this.usersService.isValidPassword(pass, user.password);
       if (isValid === true) {
-        return user;
+        const userRole = user.role as unknown as { _id: string; name: string };
+        const temp = await this.roleService.findOne(userRole._id);
+        const objUser = {
+          ...user.toObject(),
+          permissions: temp?.permissions ?? [],
+        };
+        return objUser;
       }
     }
     return null;
   }
 
   async login(user: IUser, response: Response) {
-    const { _id, name, email, role } = user;
+    const { _id, name, email, role, permissions } = user;
     const payload = {
       sub: 'token login',
       iss: 'from server',
@@ -61,24 +75,28 @@ export class AuthService {
       name,
       email,
       role,
+      permissions,
     };
   }
 
   async register(registerUserDto: RegisterUserDto) {
     //check email exist
-    // const userExist = await this.userModel.findOne({
-    //   email: registerUserDto.email,
-    // });
-    // if (userExist) {
-    //   throw new BadRequestException('Email already exist');
-    // }
+    const userExist = await this.userModel.findOne({
+      email: registerUserDto.email,
+    });
+    if (userExist) {
+      throw new BadRequestException('Email already exist');
+    }
+
+    //fetch user role
+    const userRole = await this.roleModel.findOne({ name: USER_ROLE });
 
     registerUserDto.password = this.usersService.getHashPassword(
       registerUserDto.password,
     );
     let user = await this.userModel.create({
       ...registerUserDto,
-      role: 'USER',
+      role: userRole?._id,
     });
     return {
       _id: user?._id,
@@ -118,6 +136,10 @@ export class AuthService {
         //update refresh token
         await this.usersService.updateUserToken(_id.toString(), refresh_token);
 
+        //fetch user role
+        const userRole = user.role as unknown as { _id: string; name: string };
+        const temp = await this.roleService.findOne(userRole._id);
+
         // set cookie
         response.clearCookie('refresh_token');
 
@@ -132,6 +154,7 @@ export class AuthService {
           name,
           email,
           role,
+          permissions: temp?.permissions ?? [],
         };
       }
     } catch (error) {
