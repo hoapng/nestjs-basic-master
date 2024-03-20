@@ -17,7 +17,7 @@ export class CompaniesService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto, user: IUser) {
-    let company = await this.companyModel.create({
+    const company = await this.companyModel.create({
       ...createCompanyDto,
       createdBy: {
         _id: user._id,
@@ -35,8 +35,8 @@ export class CompaniesService {
     delete filter.current;
     delete filter.pageSize;
 
-    let offset = (+currentPage - 1) * +limit;
-    let defaultLimit = +limit ? +limit : 10;
+    const offset = (+currentPage - 1) * +limit;
+    const defaultLimit = +limit ? +limit : 10;
 
     const totalItems = (await this.companyModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);

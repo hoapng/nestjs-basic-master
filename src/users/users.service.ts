@@ -118,7 +118,7 @@ export class UsersService {
     }
 
     const foundUser = await this.userModel.findOne({ _id: id });
-    if (foundUser.email === 'admin@gmail.com')
+    if (foundUser && foundUser.email === 'admin@gmail.com')
       throw new BadRequestException('Can not delete admin');
 
     await this.userModel.updateOne(
