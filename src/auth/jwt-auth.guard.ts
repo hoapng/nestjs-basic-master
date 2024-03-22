@@ -32,16 +32,29 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw err || new UnauthorizedException('Token is invalid');
     }
-    //check permission
+    // check permission
     const targetMethod = request.method;
     const targetPath = request.route?.path;
     const permissions = user?.permissions ?? [];
-    const isExisted = permissions.find((permission) => {
-      targetMethod === permission.method && targetPath === permission.apiPath;
-    });
+    const isExisted = permissions.find(
+      (permission) =>
+        targetMethod === permission.method && targetPath === permission.apiPath,
+    );
     if (!isExisted) {
       throw new ForbiddenException('Permission is invalid');
     }
+    // check permissions
+    // const targetMethod = request.method;
+    // const targetEndpoint = request.route?.path;
+    // const permissions = user?.permissions ?? [];
+    // const isExist = permissions.find(
+    //   (permission) =>
+    //     targetMethod === permission.method &&
+    //     targetEndpoint === permission.apiPath,
+    // );
+    // if (!isExist) {
+    //   throw new ForbiddenException('Permission is invalid');
+    // }
     return user;
   }
 }
